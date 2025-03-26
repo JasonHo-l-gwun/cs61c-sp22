@@ -1,0 +1,14 @@
+OSTYPE='darwin24'
+SH_VERSION='GNU bash, version 3.2.57(1)-release (arm64-apple-darwin24)
+Copyright (C) 2007 Free Software Foundation, Inc.'
+GIT_VERSION='git version 2.48.1'
+PYTHON3_VERSION='Python 3.12.0'
+PYTHON_VERSION='gen-debug.sh: line 7: python: command not found'
+PY_VERSION='gen-debug.sh: line 8: py: command not found'
+GCC_VERSION='Apple clang version 16.0.0 (clang-1600.0.26.6)
+Target: arm64-apple-darwin24.3.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin'
+JAVA_VERSION='openjdk version "17.0.14" 2025-01-21 LTS
+OpenJDK Runtime Environment Corretto-17.0.14.7.1 (build 17.0.14+7-LTS)
+OpenJDK 64-Bit Server VM Corretto-17.0.14.7.1 (build 17.0.14+7-LTS, mixed mode, sharing)'
