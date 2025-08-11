@@ -53,10 +53,25 @@ long long int sum_simd(int vals[NUM_ELEMS]) {
 
     for(unsigned int w = 0; w < OUTER_ITERATIONS; w++) {
         /* YOUR CODE GOES HERE */
-
+        __m128i sum_vec = _mm_setzero_si128();
+        for (unsigned int i = 0; i < NUM_ELEMS / 4 * 4; i += 4) {
+            __m128i tmp = _mm_loadu_si128((__m128i *) &vals[i]);
+            __m128i mask = _mm_cmpgt_epi32(tmp, _127);
+            __m128i filtered = _mm_and_si128(tmp, mask);
+            sum_vec = _mm_add_epi32(sum_vec, filtered);
+        }
+        int tmp_arr[4];
+        _mm_storeu_si128((__m128i *)tmp_arr, sum_vec);
+        for (unsigned int i = 0; i < 4; i++) {
+            result += (long long)tmp_arr[i];
+        }
         /* Hint: you'll need a tail case. */
+        for(unsigned int i = NUM_ELEMS / 4 * 4; i < NUM_ELEMS; i++) {
+            if (vals[i] >= 128) {
+                result += vals[i];
+            }
+        }
     }
-
     /* DO NOT MODIFY ANYTHING BELOW THIS LINE (in this function) */
     clock_t end = clock();
     printf("Time taken: %Lf s\n", (long double)(end - start) / CLOCKS_PER_SEC);
@@ -72,7 +87,30 @@ long long int sum_simd_unrolled(int vals[NUM_ELEMS]) {
     for(unsigned int w = 0; w < OUTER_ITERATIONS; w++) {
         /* YOUR CODE GOES HERE */
         /* Copy your sum_simd() implementation here, and unroll it */
-
+        __m128i sum_vec[4];
+        for (unsigned int i = 0; i < 4; i++) {
+            sum_vec[i] = _mm_setzero_si128();
+        }
+        for (unsigned int i = 0; i < NUM_ELEMS / 16 * 16; i += 16) {
+            __m128i tmp[4];
+            for (unsigned int j = 0; j < 4; j++) {
+                tmp[j] = _mm_loadu_si128((__m128i *) &vals[i + 4 * j]);
+                __m128i mask = _mm_cmpgt_epi32(tmp[j], _127);
+                __m128i filtered = _mm_and_si128(tmp[j], mask);
+                sum_vec[j] = _mm_add_epi32(sum_vec[j], filtered);
+            }
+        }
+        int tmp_arr[4];
+        for (unsigned i = 0; i < 4; i++) {
+            _mm_storeu_si128((__m128i *)tmp_arr, sum_vec[i]);
+            result += (long long)tmp_arr[0] + tmp_arr[1] + tmp_arr[2] + tmp_arr[3];;
+        }
+        /* Hint: you'll need a tail case. */
+        for(unsigned int i = NUM_ELEMS / 16 * 16; i < NUM_ELEMS; i++) {
+            if (vals[i] >= 128) {
+                result += vals[i];
+            }
+        }
         /* Hint: you'll need 1 or maybe 2 tail cases here. */
     }
 
