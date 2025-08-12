@@ -34,14 +34,32 @@ void v_add_naive(double* x, double* y, double* z) {
 void v_add_optimized_adjacent(double* x, double* y, double* z) {
     // TODO: Implement this function
     // Do NOT use the `for` directive here!
+    #pragma omp parallel
+    {
+        int nthreads = omp_get_num_threads();
+        int tid = omp_get_thread_num();
+        for (int i = tid; i < ARRAY_SIZE; i += nthreads) {
+            z[i] = x[i] + y[i];
+        }
+    }
 }
 
 // Chunks Method
 void v_add_optimized_chunks(double* x, double* y, double* z) {
     // TODO: Implement this function
     // Do NOT use the `for` directive here!
+    #pragma omp parallel 
+    {
+        int tid = omp_get_thread_num();
+        int nthreads = omp_get_num_threads();
+        int chunk = ARRAY_SIZE / nthreads;
+        int start = tid * chunk;
+        int end = (tid == nthreads - 1) ? ARRAY_SIZE : (tid + 1) * chunk;
+        for (int i = start; i < end; i++) {
+            z[i] = x[i] + y[i];
+        }
+    }
 }
-
 /* -------------------------------Dot Product------------------------------*/
 double dotp_naive(double* x, double* y, int arr_size) {
     double global_sum = 0.0;
@@ -60,6 +78,20 @@ double dotp_manual_optimized(double* x, double* y, int arr_size) {
     double global_sum = 0.0;
     // TODO: Implement this function
     // Do NOT use the `reduction` directive here!
+    #pragma omp parallel
+    {
+        double local_sum = 0.0;
+        int tid = omp_get_thread_num();
+        int nthreads = omp_get_num_threads();
+        int chunk = arr_size / nthreads;
+        int start = tid * chunk;
+        int end = (tid == nthreads - 1) ? arr_size : (tid + 1) * chunk;
+        for (int i = start; i < end; i++) local_sum += x[i] * y[i];
+        #pragma omp critical
+        {
+            global_sum += local_sum;
+        }
+    }
     return global_sum;
 }
 
@@ -68,6 +100,12 @@ double dotp_reduction_optimized(double* x, double* y, int arr_size) {
     double global_sum = 0.0;
     // TODO: Implement this function
     // Please DO use the `reduction` directive here!
+    #pragma omp parallel reduction(+ : global_sum)
+    {
+        #pragma omp for
+        for (int i = 0; i < arr_size; i++) global_sum += x[i] * y[i];
+    }
+    return global_sum;
     return global_sum;
 }
 
