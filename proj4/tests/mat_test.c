@@ -118,7 +118,6 @@ void add_test(void) {
   deallocate_matrix(mat2);
 }
 
-/* (OPTIONAL) Uncomment the following sub_test if you have decided to implement it in matrix.c.
 void sub_test(void) {
   matrix *result = NULL;
   matrix *mat1 = NULL;
@@ -142,9 +141,26 @@ void sub_test(void) {
   deallocate_matrix(mat1);
   deallocate_matrix(mat2);
 }
-*/
 
-/* (OPTIONAL) Uncomment the following neg_test if you have decided to implement it in matrix.c.
+void sub_3x3_test(void) {
+    int rows = 3, cols = 3, n = rows * cols;
+    matrix *result = NULL, *m1 = NULL, *m2 = NULL;
+    CU_ASSERT_EQUAL(allocate_matrix(&result, rows, cols), 0);
+    CU_ASSERT_EQUAL(allocate_matrix(&m1, rows, cols), 0);
+    CU_ASSERT_EQUAL(allocate_matrix(&m2, rows, cols), 0);
+    for (int i = 0; i < n; ++i) {
+        m1->data[i] = i + 10;
+        m2->data[i] = (i + 1) * 3;
+    }
+    CU_ASSERT_EQUAL(sub_matrix(result, m1, m2), 0);
+    for (int i = 0; i < n; ++i) {
+        CU_ASSERT_EQUAL(result->data[i], m1->data[i] - m2->data[i]);
+    }
+    deallocate_matrix(result);
+    deallocate_matrix(m1);
+    deallocate_matrix(m2);
+}
+
 void neg_test(void) {
   matrix *result = NULL;
   matrix *mat = NULL;
@@ -163,8 +179,7 @@ void neg_test(void) {
   }
   deallocate_matrix(result);
   deallocate_matrix(mat);
-} 
-*/
+}
 
 void abs_test(void) {
   matrix *result = NULL;
@@ -292,10 +307,8 @@ int main (void)
 
    /* add the tests to the suite */
    if ((CU_add_test(pSuite, "add_test", add_test) == NULL) ||
-        /* (OPTIONAL) Uncomment the following lines if you have implemented sub_matrix and neg_matrix.
         (CU_add_test(pSuite, "sub_test", sub_test) == NULL) ||
         (CU_add_test(pSuite, "neg_test", neg_test) == NULL) ||
-        */
         (CU_add_test(pSuite, "mul_square_test", mul_square_test) == NULL) ||
         (CU_add_test(pSuite, "mul_non_square_test", mul_non_square_test) == NULL) ||
         (CU_add_test(pSuite, "abs_test", abs_test) == NULL) ||
@@ -306,7 +319,8 @@ int main (void)
         (CU_add_test(pSuite, "alloc_ref_success_test", alloc_ref_success_test) == NULL) ||
         (CU_add_test(pSuite, "dealloc_null_test", dealloc_null_test) == NULL) ||
         (CU_add_test(pSuite, "get_test", get_test) == NULL) ||
-        (CU_add_test(pSuite, "set_test", set_test) == NULL)
+        (CU_add_test(pSuite, "set_test", set_test) == NULL) ||
+        (CU_add_test(pSuite, "sub_3x3_test", sub_3x3_test) == NULL)
      )
    {
       CU_cleanup_registry();

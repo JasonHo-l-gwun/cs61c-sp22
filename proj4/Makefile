@@ -8,7 +8,7 @@ install:
 	if [ ! -f files.txt ]; then touch files.txt; fi
 	rm -rf build
 	xargs rm -rf < files.txt
-	python3 setup.py install --record files.txt
+	python setup.py install --record files.txt
 
 uninstall:
 	if [ ! -f files.txt ]; then touch files.txt; fi
